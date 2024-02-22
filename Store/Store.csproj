@@ -1,0 +1,52 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <RootNamespace>WebApplicationL5</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="MailKit" Version="4.2.0" />
+      <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.21" />
+      <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="6.0.20" />
+      <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.10" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.10">
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        <PrivateAssets>all</PrivateAssets>
+      </PackageReference>
+      <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="7.0.10" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.10">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="MySql.Data" Version="8.1.0" />
+      <PackageReference Include="MySql.EntityFrameworkCore" Version="7.0.5" />
+      <PackageReference Include="MySqlConnector" Version="2.3.0-beta.3" />
+      <PackageReference Include="NUnit" Version="3.13.3" />
+      <PackageReference Include="NUnit.Analyzers" Version="3.7.0">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
+      <PackageReference Include="prometheus-net.AspNetCore" Version="8.0.1" />
+      <PackageReference Include="Quartz.AspNetCore" Version="3.7.0" />
+      <PackageReference Include="Serilog.AspNetCore" Version="7.0.0" />
+      <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+      <PackageReference Include="System.Net.Mail.Abstractions" Version="1.1.21" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Views\Account\Index.cshtml" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Logs" />
+    </ItemGroup>
+
+</Project>
