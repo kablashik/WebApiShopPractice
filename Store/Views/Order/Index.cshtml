@@ -1,0 +1,221 @@
+﻿@model IList<WebApplicationL5.Models.OrderModel>;
+@{
+    ViewData["Title"] = "Orders Page";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<a href="/order/logout" class="btn btn-primary">LogOut</a>
+
+<div class="text-center">
+    <h1 class="display-4">Orders</h1>
+    <div class="myTable">
+        <table id="table_3">
+            <tr>
+                <th>ID</th>
+                <th>CustomerID</th>
+                <th>ProductID</th>
+                <th>Количество</th>
+                <th>Дата создания</th>
+                <th>Действие</th>
+            </tr>
+
+            @foreach (var order in Model)
+            {
+                var id = order.Id;
+                <tr id="row_@id">
+                    <td id="index_@id" style="font-style: italic">@order.Id</td>
+                    <td>
+                        <div id="customer_Id_@id">@order.CustomerId</div>
+                    </td>
+                    <td>
+                        <div id="product_Id_@id">@order.ProductId</div>
+                    </td>
+                    <td>
+                        <div id="count_@id">@order.Count</div>
+                    </td>
+                    <td>
+                        <div id="created_at_@id">@order.CreatedAt.ToString("yyyy-MM-dd")</div>
+                    </td>
+                    <td>
+                        <button id="create_button_@id" onclick="onCreateClick(@id)">➕</button>
+                        <button id="edit_button_@id" onclick="onEditClick(@id)">✎</button>
+                        <button id="delete_button_@id" onclick="onDeleteClick(@id)">❌</button>
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+</div>
+
+<script>
+    async function onCreateClick(id) {
+        let row = addRow();
+        let orderId;
+        let response = await fetch('/Order/id');
+    
+        if (response.ok) {
+            orderId = await response.text();
+            changeID(row, orderId);
+            onEditClick(orderId);
+            clearInputsInRow(row);
+        } else {
+            console.error("Произошла ошибка:", response.status);
+        }
+    }
+    
+    async function onDeleteClick(id) {
+        let response = await fetch(`/Order/delete-${id}`);
+        if (response.ok) {
+            let rowToDelete = document.getElementById(`row_${id}`)
+            rowToDelete.remove();
+        } else {
+            alert("Ошибка: " + response.status);
+        }
+    }
+    
+    function onEditClick(ID) {
+        let row = document.getElementById(`row_${ID}`);
+        let cell = row.getElementsByTagName('td');
+
+        for (let cellID = 1; cellID < 5; cellID++) {
+            addInputAndHideText(cell[cellID], ID, cellID);
+        }
+
+        addEditButtons('edit_button', ID, 'OK');
+        addEditButtons('delete_button', ID, 'Cancel');
+    }
+    
+    function addRow() {
+        let table = document.getElementById("table_3");
+        let rows = table.getElementsByTagName("tr");
+        let lastRow = rows[rows.length - 1];
+
+        let duplicateRow = lastRow.cloneNode(true);
+        table.appendChild(duplicateRow);
+        lastRow = rows[rows.length - 1];
+
+        return lastRow;
+    }
+    
+    async function update(order, id) {
+        order.ID = id;
+        await fetch(`/Order/update`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(order)
+    });
+}
+
+    function addInputAndHideText(cell, rowID, cellID) {
+        let input = document.createElement("input");
+        input.id = `input_row_${rowID}_cell_${cellID}`;
+        input.value = cell.innerText;
+        cell.appendChild(input);
+        cell.querySelector('div').style.display = 'none';
+    }
+    
+    function createModelFromInput(field) {
+        
+        return {
+            CustomerId: parseInt(field[0]) || 0,
+            ProductId: parseInt(field[1]) || 0,
+            Count: parseInt(field[2]) || 0,
+            CreatedAt: `${field[3]}` || "0001-01-01"
+        };
+    }
+    
+    function clearInputsInRow(row) {
+        let inputElements = row.getElementsByTagName("input");
+        for (let i = 0; i < inputElements.length; i++) {
+            inputElements[i].value = "";
+        }
+    }
+        
+    function addEditButtons(route, id, name) {
+        let button = document.getElementById(`${route}_${id}`);
+        let newButton = document.createElement("button");
+        newButton.textContent = name;
+        newButton.id = `${name}_button_${id}`;
+
+        name === "OK" ? newButton.onclick = () => confirm(id, true) : null;
+        name === "Cancel" ? newButton.onclick = () => confirm(id, false) : null;
+
+        button.replaceWith(newButton);
+
+        document.getElementById(`create_button_${id}`).style.display = 'none';
+    }
+    
+    function confirm(id, saveChanges) {
+        let row = document.getElementById(`row_${id}`);
+        let cell = row.getElementsByTagName('td');
+
+        let fields = [];
+        for (let cellID = 1; cellID < 5; cellID++) {
+            let input = document.getElementById(`input_row_${id}_cell_${cellID}`);
+            let element = cell[cellID].querySelector('div');
+            fields.push(input.value);
+
+            if (saveChanges) {
+                element.innerText = input.value;
+            }
+
+            input.remove();
+            element.style.display = '';
+        }
+
+        let product = createModelFromInput(fields);
+
+        if (saveChanges) {
+            update(product, id);
+        }
+
+        ReturnEditButtons(id);
+    }
+    
+    function ReturnEditButtons(id) {
+        let OkButton = document.getElementById(`OK_button_${id}`)
+        let newEditButton = document.createElement("button");
+        newEditButton.textContent = "✎";
+        newEditButton.id = `edit_button_${id}`;
+        newEditButton.onclick = () => onEditClick(id);
+
+        let deleteButton = document.getElementById(`Cancel_button_${id}`)
+        let newDeleteButton = document.createElement("button");
+        newDeleteButton.textContent = "❌";
+        newDeleteButton.id = `delete_button_${id}`;
+
+        OkButton.replaceWith(newEditButton);
+        deleteButton.replaceWith(newDeleteButton);
+
+        document.getElementById(`create_button_${id}`).style.display = '';
+    }
+    
+    function changeIdNumericPart(id, newNumericValue) {
+        return id.replace(/_\d+$/, `_${newNumericValue}`);
+    }
+    
+    function changeID(row, id) {
+    
+        row.id = `row_${id}`;
+        let elements = row.getElementsByTagName("*");
+        for (let i = 0; i < elements.length; i++) {
+            let element = elements[i];
+            
+           if (i === 0){
+               element.id = `index_${id}`;
+               element.innerText = id;
+           }
+            
+            if (element.tagName.toLowerCase() === "div") {
+                element.id = changeIdNumericPart(element.id, id);
+            }
+            
+            if (element.tagName.toLowerCase() ==="button"){
+                //element.setAttribute("onclick", `onEditButton(${id})`);
+                element.id = changeIdNumericPart(element.id, id);
+            }
+        }
+    }        
+</script>

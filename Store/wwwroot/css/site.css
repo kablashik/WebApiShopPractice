@@ -1,0 +1,45 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+.myTable
+{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.myTable table
+{
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.myTable th
+{
+  background-color: #DCDCDC;
+  padding: 8px;
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+}
+
+.myTable td
+{
+  background-color: #FBFBF9;
+  border: 1px solid black;
+  padding: 8px;
+}
